@@ -92,7 +92,7 @@ def mixPodcasts(baseDir, dirList, maxSequence=2):
 		numInCurrentSequence = maxSequence - 1
 		while(len(podList) > 0):
 
-			index = 0 if maxSequence > numInCurrentSequence else indexOfNextDifferentShow(podList, podcastName(podList[0]))
+			index = 0 if maxSequence > numInCurrentSequence else indexOfNextDifferentShow(podList, lastPodcastName)
 			numInCurrentSequence = numInCurrentSequence +1 if index == 0 else 0
 			lastPodcastName = podcastName(podList[index])
 			podListNew.append(podList.pop(index))
