@@ -112,7 +112,7 @@ def getPodcastsFromDir(baseDir, directory, limit=0, offset=0):
 print("=== starting syncPlaylists.py  ===")
 print("=== started at " + str(datetime.datetime.now()) + " ===")
 		
-baseSync = "/home/kdc/btsync/syncDir/Sync/podcasts/"
+baseSync = "/home/kdc/Public/Sync/podcasts/"
 
 commutePlaylistName = baseSync + "commute.m3u"
 workoutPlaylistName = baseSync + "workout.m3u"

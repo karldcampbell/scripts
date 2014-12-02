@@ -25,7 +25,7 @@ print("=== starting downloadPodcasts.py ===")
 print("=== started at " + str(datetime.datetime.now()) + " ===")
 
 baseSource = "/mnt/share/Podcasts/"
-baseSync = "/home/kdc/btsync/syncDir/Sync/podcasts/"
+baseSync = "/home/kdc/Public/Sync/podcasts/"
 
 datePrefix = datetime.date.today();
 sourceDirs = [	["Added_First"],

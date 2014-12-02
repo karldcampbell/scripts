@@ -2,46 +2,46 @@
 #HandBrakeCLI -i <filename> -o <filename>.mp4 --preset="Android Tablet" -N eng --subtitle-burned
 
 import os
+import sys
 from subprocess import call
 
 
-audioTrack=1
-subtitleTrack = 1
+def doEncode(srcFileName, destFileName):
+	tmp = os.popen("mediainfo " + srcFileName).read()
+	arr = tmp.split("\n\n")
+	
+	audioTrack=1
+	subtitleTrack = 1
 
-inputDir = "/home/kdc/tmp/"
-outputDir = "/home/kdc/tmp/"
-fileName= "Gilmore Girls - S01e04 - The Deer-Hunters"
+	for line in arr:
+		if(line.startswith("Text") and "English" in line):
+			subtitleTrackStr = line.split('\n')[0]
+			if("Text #" in subtitleTrackStr):
+				subtitleTrack = subtitleTrackStr.replace("Text #", "").strip()
 
-#fileName = fileName.replace(" ", "\ ");
+	for line in arr:
+		if(line.startswith("Audio") and "English" in line):
+			audioTrackStr = line.split('\n')[0]
+			if("Audio #" in audioTrackStr):
+				audioTrack = audioTrackStr.replace("Audio #", "").strip()
 
-infile =  inputDir+fileName+".mkv"
-outfile = outputDir + fileName + ".mp4"
+	call(["HandBrakeCLI","-i", infile, "-o", outfile, "--preset=Android Tablet",
+		"-a", str(audioTrack), "-N","eng", "-s", str(subtitleTrack), "--subtitle-burned"])
 
-#command = "HandBrakeCLI -i {0} -o {1} --preset=\"Android\"".format(infile, outfile)
-#print(command)
-#commandArr = ["HandBrakeCLI", "-i", infile, "-o", outfile, "--preset=Android Tablet"]
-#call(commandArr)
+def getFilesInDir(sourceDir):
+	sourceFiles = []
+	for root, dirs, files in os.walk(sourceDir):
+		files = [f for f in files if (not f.startswith('.') and f.endswith('.mkv'))]
+		dirs[:] = [d for d in dirs if not d.startswith('.')]
 
-tmp = os.popen("mediainfo ~/tmp/Gilmore\ Girls\ -\ S01e04\ -\ The\ Deer-Hunters.mkv Gilmore\ Girls\ -\ S01e04\ -\ The\ Deer-Hunters.mkv").read()
-arr = tmp.split("\n\n")
-for line in arr:
-	if(line.startswith("Text") and "English" in line):
-		subtitleTrackStr = line.split('\n')[0]
-		if("Text #" in subtitleTrackStr):
-			subtitleTrack = subtitleTrackStr.replace("Text #", "").strip()
+		for f in files:
+			sourceFiles.append(root + f)
+	return sourceFiles
 
-for line in arr:
-	if(line.startswith("Audio") and "English" in line):
-		audioTrackStr = line.split('\n')[0]
-		if("Audio #" in audioTrackStr):
-			audioTrack = audioTrackStr.replace("Audio #", "").strip()
+print(sys.argv)
+if(len(sys.argv) != 2):
+	print("Usage:  encodeMovies <sourceDir> <destDir>");
+	sys.exit(1)
 
-print(audioTrack)
-print(subtitleTrack)
-
-
-
-#call(["HandBrakeCLI","-i", inputDir+fileName+".mkv", "-o", outputDir + fileName + ".mp4"])
-
-call(["HandBrakeCLI","-i", infile, "-o", outfile, "--preset=Android Tablet",
-	"-a", str(audioTrack), "-N","eng", "-s", str(subtitleTrack), "--subtitle-burned"])
+for f in getFilesInDir(sys.argv[1]):
+	print(f)
