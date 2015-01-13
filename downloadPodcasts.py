@@ -7,10 +7,11 @@ import random
 from shutil import move
 from subprocess import call
 
-defaultFileNum = 4
+defaultFileNum = 3
 def movePodcasts(sourceBase, destBase, directory,  count=defaultFileNum):
 	destDir = os.listdir(destBase + directory)
 	filesShort = count - len(destDir)
+	#if filesShort > 0:
 	print("Need " + str(filesShort) + " files for " + directory)
 	files = [ x for x in os.listdir(sourceBase + directory) if not x.startswith('.') ]
 	files.sort()
@@ -25,17 +26,13 @@ print("=== starting downloadPodcasts.py ===")
 print("=== started at " + str(datetime.datetime.now()) + " ===")
 
 baseSource = "/mnt/share/Podcasts/"
-baseSync = "/home/kdc/Public/Sync/podcasts/"
+baseSync = "/home/kdc/Public/sync/podcasts/"
 
 datePrefix = datetime.date.today();
-sourceDirs = [	["Added_First"],
-								["Added_Second"],
+sourceDirs = [	["Added/"],
 								["News/Tech Talk Today/"],
 
-								["Gaming/Convert to Raid/"],
-								["Gaming/Convert to Raid Old/"],
-								["Gaming/Tauren Think Tank/"],
-								["Gaming/Tauren Think Tank Old/"],
+								["Tech/Omega Tau/"],
 								
 								["Linux/Linux Action Show/"],
 								["Linux/Linux Unplugged/"],
@@ -57,7 +54,9 @@ sourceDirs = [	["Added_First"],
 								["Politics/The Ricochet Podcast Old/"],
 								["Politics/Serial/"],
 
-								["Religion/One Peter Five/"]
+								["Religion/One Peter Five/"],
+
+								["Fitness/Get up and Code/"]
 							]
 
 call("podget")

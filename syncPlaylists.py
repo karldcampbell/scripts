@@ -34,28 +34,43 @@ def getFileList(baseDir, dirList):
 
 	return(fileList)
 
-def generatePlaylist(listOfNewLines, oldList):
+def generatePlaylist(listOfNewLines, oldList, currentlyPlaying, keepFirstLine=True):
 	playlist = []
 	for l in listOfNewLines:
 		for i in l:
 			playlist.append(i)
 
-	lastPlayedFile = oldList[0] if len(oldList) > 0 else ""
+	lastPlayedFile = oldList[0] if keepFirstLine and len(oldList) > 0 else ""
 	if lastPlayedFile in playlist:
 		playlist.remove(lastPlayedFile)
 		playlist = [lastPlayedFile] + playlist
 
+	filesToRemove = [x for x in currentlyPlaying if x != lastPlayedFile ]
+	for f in filesToRemove:
+		if f in playlist:
+			playlist.remove(f)
+
 	return playlist
 	
-def generatePlaylistFile(baseDir, fileName, listOfLines):
-	playlistFilename = baseSync + fileName
-	playlistFile = open(playlistFilename, "r")
-	oldLines = [x for x in playlistFile.readlines() if not x.startswith('#')]
-	playlistFile.close()
+def generatePlaylistFile(baseDir, fileName, currentlyPlaying, listOfLines, keepFirstLine=True, debug=False):
+	playlistFilename = baseSync + fileName	
+	oldLines = []
+	
+	if(os.path.exists(playlistFilename)):
+		playlistFile = open(playlistFilename, "r")
+		oldLines = [x for x in playlistFile.readlines() if not x.startswith('#')]
+		playlistFile.close()
 
-	newLines = generatePlaylist(listOfLines, oldLines)
-	#print(oldLines)
-	#print(newLines)
+	newLines = generatePlaylist(listOfLines, oldLines, currentlyPlaying, keepFirstLine)
+	
+	if(len(newLines) == 0 and os.path.exists(playlistFilename)):
+		print("no audio files for " + fileName + ". Deleting playlist.")		
+		os.remove(playlistFilename)
+		return
+
+	if(debug):
+		print(oldLines)
+		print(newLines)
 	
 	if not areEqual(newLines, oldLines):
 		print("playlist " + fileName + " has changed")
@@ -107,58 +122,87 @@ def getPodcastsFromDir(baseDir, directory, limit=0, offset=0):
 	num = limit if limit > 0 else len(podcasts)
 	return [directory.replace("/", "\\") + "\\" +x+ '\n' for x in podcasts[offset:num]]
 
+def getCurrentlyPlaying(baseDir, fileList):
+	playingList = []
+	for f in fileList:
+		try:
+			infile = open(baseDir + f, 'r')
+			oldLines = [x for x in infile.readlines() if not x.startswith('#')]
+			playing = oldLines[0]
+			playingList.append(playing)
+		except IOError:
+			print("Error opening file: " + f)
+	return(playingList)
 ###########################################################
 
 print("=== starting syncPlaylists.py  ===")
 print("=== started at " + str(datetime.datetime.now()) + " ===")
 		
-baseSync = "/home/kdc/Public/Sync/podcasts/"
+baseSync = "/home/kdc/Public/sync/podcasts/"
 
 commutePlaylistName = baseSync + "commute.m3u"
 workoutPlaylistName = baseSync + "workout.m3u"
 
+#####
+currentlyPlaying = getCurrentlyPlaying(baseSync, ["commute.m3u", "workout.m3u"])
+
 header = getPodcastsFromDir(baseSync, "News/Tech Talk Today") + \
-				 getPodcastsFromDir(baseSync, "Added_First", limit=1) + \
+				 getPodcastsFromDir(baseSync, "Added", limit=1) + \
 				 getPodcastsFromDir(baseSync, "Politics/Serial")
 
+commuteLinux = mixPodcasts(baseSync, ["Linux/Linux Action Show", "Linux/Linux Unplugged"])
+commuteProgramming = mixPodcasts(baseSync, ["Programming/Java Posse", "Programming/Software Engineering Radio"])
+commuteOld = mixPodcasts(baseSync, ["Programming/Coder Radio", "Programming/HanselMinutes",
+					"Programming/Herding Code", "Programming/Java Posse Old", "Tech/Omega Tau"])
+tmp = []
 
-generatePlaylistFile(baseSync, "commute.m3u", 
+
+generatePlaylistFile(baseSync, "commute.m3u", currentlyPlaying,
 		[ 
 			header,
-			mixPodcasts(baseSync, ["Linux/Linux Action Show", "Linux/Linux Unplugged",
-					"Programming/Java Posse", "Programming/Software Engineering Radio"]),
-			getPodcastsFromDir(baseSync, "Added_Second"),
-			mixPodcasts(baseSync, ["Programming/Coder Radio", "Programming/HanselMinutes",
-					"Programming/Herding Code", "Programming/Java Posse Old", "Religion/One Peter Five"])
+			getPodcastsFromDir(baseSync, "Added",offset=1),
+			commuteProgramming if len(commuteProgramming) > 0 else [commuteOld[0]],
+			commuteLinux,
+			commuteOld if len(commuteProgramming) > 0 else commuteOld[1:]
 		])
 
-generatePlaylistFile(baseSync, "workout.m3u",
-		[ 
-			header,
-			mixPodcasts(baseSync, ["Politics/Honey Badger Radio", "Politics/The Ricochet Podcast", 
+#####
+
+workoutNew = mixPodcasts(baseSync, ["Politics/Honey Badger Radio", "Politics/The Ricochet Podcast", 
 				"Politics/The Libertarian - Richard Epstein", "Religion/One Peter Five",
-				"Politics/Law Talk"]),
-			getPodcastsFromDir(baseSync, "Added_Second"),
-			mixPodcasts(baseSync, ["Linux/Linux Action Show", "Linux/Linux Unplugged"]),
-			mixPodcasts(baseSync, ["Politics/JB Unfilter", "Politics/AVFM Radio",
-					"Politics/The Ricochet Podcast Old"])
-		])
+				"Politics/Law Talk", "Fitness/Get up and Code"])
+workoutOld = mixPodcasts(baseSync, ["Politics/JB Unfilter", "Politics/AVFM Radio",
+					"Politics/The Ricochet Podcast Old", "Tech/Omega Tau"])
 
-
-generatePlaylistFile(baseSync, "gaming.m3u",
-		[
+generatePlaylistFile(baseSync, "workout.m3u", currentlyPlaying,
+		[ 
 			header,
-			mixPodcasts(baseSync, ["Gaming/Convert to Raid", "Gaming/Tauren Think Tank"]),
-			mixPodcasts(baseSync, ["Politics/Honey Badger Radio", "Politics/The Ricochet Podcast", 
-				"Politics/The Libertarian - Richard Epstein", "Linux/Linux Action Show", "Linux/Linux Unplugged",
-				"Politics/Law Talk", "Religion/One Peter Five"]),
-			mixPodcasts(baseSync, ["Gaming/Convert to Raid Old", "Gaming/Tauren Think Tank Old"]),
+			getPodcastsFromDir(baseSync, "Added", offset=1),
+			workoutNew,
+			commuteLinux,
+			workoutOld
 		])
 
-generatePlaylistFile(baseSync, "all.m3u",
+####
+
+gamingNew = []# mixPodcasts(baseSync, ["Gaming/Convert to Raid", "Gaming/Tauren Think Tank"]) 
+gamingOld = [] # mixPodcasts(baseSync, ["Gaming/Convert to Raid Old", "Gaming/Tauren Think Tank Old","Tech/Omega Tau"])
+
+#generatePlaylistFile(baseSync, "gaming.m3u", currentlyPlaying,
+#		[
+#			header,
+#			gamingNew,
+#			workoutNew,
+#			commuteLinux,
+#			gamingOld
+#		])
+
+#####
+
+generatePlaylistFile(baseSync, "all.m3u", currentlyPlaying,
 		[ mixPodcasts(baseSync, [
-				"Added_First",
-				"Added_Second", 
+				"Added",
+				"Tech/Omega Tau",
 				"News/Tech Talk Today",
 				"Linux/Linux Action Show",
 				"Linux/Linux Unplugged",
@@ -176,10 +220,20 @@ generatePlaylistFile(baseSync, "all.m3u",
 				"Politics/The Ricochet Podcast",
 				"Politics/The Ricochet Podcast Old",
 				"Politics/Serial",
-				"Gaming/Convert to Raid",
-				"Gaming/Convert to Raid Old",
-				"Religion/One Peter Five"
+				"Religion/One Peter Five",
+				"Fitness/Get up and Code"
 			], maxSequence=0)
 		])
+generatePlaylistFile(baseSync, "z0_current.m3u", [], [currentlyPlaying], keepFirstLine=False)
+generatePlaylistFile(baseSync, "z0_header.m3u", currentlyPlaying, [header], keepFirstLine=False)
+generatePlaylistFile(baseSync, "z_commute_programming.m3u", currentlyPlaying, [commuteProgramming], keepFirstLine=False)
+generatePlaylistFile(baseSync, "z_commute_linux.m3u", currentlyPlaying, [commuteLinux], keepFirstLine=False)
+generatePlaylistFile(baseSync, "z_commute_old.m3u", currentlyPlaying, [commuteOld], keepFirstLine=False)
+
+generatePlaylistFile(baseSync, "z_workout_new.m3u", currentlyPlaying, [workoutNew], keepFirstLine=False)
+generatePlaylistFile(baseSync, "z_workout_old.m3u", currentlyPlaying, [workoutOld], keepFirstLine=False)
+
+#generatePlaylistFile(baseSync, "z_gaming_new.m3u", currentlyPlaying, [gamingNew], keepFirstLine=False)
+#generatePlaylistFile(baseSync, "z_gaming_old.m3u", currentlyPlaying, [gamingOld], keepFirstLine=False)
 
 print("=== finished at " + str(datetime.datetime.now()) + " ===\n\n")
