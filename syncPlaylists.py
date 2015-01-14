@@ -151,9 +151,11 @@ header = getPodcastsFromDir(baseSync, "News/Tech Talk Today") + \
 				 getPodcastsFromDir(baseSync, "Politics/Serial")
 
 commuteLinux = mixPodcasts(baseSync, ["Linux/Linux Action Show", "Linux/Linux Unplugged"])
-commuteProgramming = mixPodcasts(baseSync, ["Programming/Java Posse", "Programming/Software Engineering Radio"])
-commuteOld = mixPodcasts(baseSync, ["Programming/Coder Radio", "Programming/HanselMinutes",
-					"Programming/Herding Code", "Programming/Java Posse Old", "Tech/Omega Tau"])
+commuteProgramming = mixPodcasts(baseSync, ["Programming/Java Posse", "Programming/Software Engineering Radio",
+			"Programming/HanselMinutes", "Programming/Coder Radio", "Programming/Herding Code"])
+
+commuteOld = mixPodcasts(baseSync, ["Programming/Coder Radio Old", "Programming/HanselMinutes Old",
+					"Programming/Herding Code Old", "Programming/Java Posse Old", "Tech/Omega Tau"])
 tmp = []
 
 
@@ -161,9 +163,9 @@ generatePlaylistFile(baseSync, "commute.m3u", currentlyPlaying,
 		[ 
 			header,
 			getPodcastsFromDir(baseSync, "Added",offset=1),
-			commuteProgramming if len(commuteProgramming) > 0 else [commuteOld[0]],
+			commuteProgramming,
 			commuteLinux,
-			commuteOld if len(commuteProgramming) > 0 else commuteOld[1:]
+			commuteOld
 		])
 
 #####
@@ -171,8 +173,11 @@ generatePlaylistFile(baseSync, "commute.m3u", currentlyPlaying,
 workoutNew = mixPodcasts(baseSync, ["Politics/Honey Badger Radio", "Politics/The Ricochet Podcast", 
 				"Politics/The Libertarian - Richard Epstein", "Religion/One Peter Five",
 				"Politics/Law Talk", "Fitness/Get up and Code"])
-workoutOld = mixPodcasts(baseSync, ["Politics/JB Unfilter", "Politics/AVFM Radio",
-					"Politics/The Ricochet Podcast Old", "Tech/Omega Tau"])
+
+workoutOld = mixPodcasts(baseSync, ["Politics/AVFM Radio", "Politics/Law Talk Old",
+					"Politics/The Ricochet Podcast Old", "Tech/Omega Tau", "Fitness/Get up and Code Old",
+					"Politics/Honey Badger Radio Old"])
+
 
 generatePlaylistFile(baseSync, "workout.m3u", currentlyPlaying,
 		[ 
@@ -202,26 +207,40 @@ gamingOld = [] # mixPodcasts(baseSync, ["Gaming/Convert to Raid Old", "Gaming/Ta
 generatePlaylistFile(baseSync, "all.m3u", currentlyPlaying,
 		[ mixPodcasts(baseSync, [
 				"Added",
-				"Tech/Omega Tau",
-				"News/Tech Talk Today",
+				
+				"Fitness/Get up and Code",
+				"Fitness/Get up and Code Old",
+
 				"Linux/Linux Action Show",
 				"Linux/Linux Unplugged",
+				
+				"News/Tech Talk Today",
+				
+				"Politics/AVFM Radio",
+				"Politics/Honey Badger Radio",
+				"Politics/Honey Badger Radio Old",
+				"Politics/Law Talk",
+				"Politics/Law Talk Old",
+				"Politics/Serial",
+				"Politics/The Libertarian - Richard Epstein",
+				"Politics/The Libertarian - Richard Epstein Old",
+				"Politics/The Ricochet Podcast",
+				"Politics/The Ricochet Podcast Old",
+				
 				"Programming/Coder Radio",
+				"Programming/Coder Radio Old",
 				"Programming/HanselMinutes",
+				"Programming/HanselMinutes Old",
 				"Programming/Herding Code",
+				"Programming/Herding Code Old",
 				"Programming/Java Posse",
 				"Programming/Java Posse Old",
 				"Programming/Software Engineering Radio",
-				"Politics/AVFM Radio",
-				"Politics/JB Unfilter",
-				"Politics/Honey Badger Radio",
-				"Politics/Law Talk",
-				"Politics/The Libertarian - Richard Epstein",
-				"Politics/The Ricochet Podcast",
-				"Politics/The Ricochet Podcast Old",
-				"Politics/Serial",
+				
 				"Religion/One Peter Five",
-				"Fitness/Get up and Code"
+				
+				"Tech/Omega Tau",
+				
 			], maxSequence=0)
 		])
 generatePlaylistFile(baseSync, "z0_current.m3u", [], [currentlyPlaying], keepFirstLine=False)

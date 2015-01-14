@@ -31,8 +31,11 @@ def movePodcasts(sourceBase, destBase, directory,  count=3, oldEpisodes=False):
 			for i in range(0, filesToMove):
 				source = sourceBase + directory + "/" + files[i]
 				dest = sourceBase + directory + " Old/" + files[i]
-				print("  " + source + "  ->  " + dest)
-				move(source, dest)
+				try:
+					move(source, dest)
+					print("  " + source + "  ->  " + dest)
+				except:
+					print("error moving file " + source)
 		movePodcasts(sourceBase, destBase, directory + " Old", count=count-filesInDest)
 
 print("=== starting downloadPodcasts.py ===")
@@ -63,22 +66,22 @@ movePodcasts(baseSource, baseSync, "Tech/Omega Tau")
 movePodcasts(baseSource, baseSync, "Linux/Linux Action Show")
 movePodcasts(baseSource, baseSync, "Linux/Linux Unplugged")
 
-movePodcasts(baseSource, baseSync, "Programming/Coder Radio")
-movePodcasts(baseSource, baseSync, "Programming/HanselMinutes")
-movePodcasts(baseSource, baseSync, "Programming/Herding Code")
+movePodcasts(baseSource, baseSync, "Programming/Coder Radio", oldEpisodes=True)
+movePodcasts(baseSource, baseSync, "Programming/HanselMinutes", oldEpisodes=True)
+movePodcasts(baseSource, baseSync, "Programming/Herding Code", oldEpisodes=True)
 movePodcasts(baseSource, baseSync, "Programming/Java Posse", oldEpisodes=True)
 movePodcasts(baseSource, baseSync, "Programming/Software Engineering Radio")
 
 movePodcasts(baseSource, baseSync, "Politics/AVFM Radio")
-movePodcasts(baseSource, baseSync, "Politics/JB Unfilter")
-movePodcasts(baseSource, baseSync, "Politics/Honey Badger Radio")
-movePodcasts(baseSource, baseSync, "Politics/Law Talk")
+movePodcasts(baseSource, baseSync, "Politics/Honey Badger Radio", oldEpisodes=True)
+movePodcasts(baseSource, baseSync, "Politics/Law Talk", oldEpisodes=True)
 movePodcasts(baseSource, baseSync, "Politics/The Libertarian - Richard Epstein", oldEpisodes=True)
 movePodcasts(baseSource, baseSync, "Politics/The Ricochet Podcast", oldEpisodes=True)
+#movePodcasts(baseSource, baseSync, "Politics/JB Unfilter")
 #movePodcasts(baseSource, baseSync, "Politics/Serial/")
 
-movePodcasts(baseSource, baseSync, "Religion/One Peter Five/")
-movePodcasts(baseSource, baseSync, "Fitness/Get up and Code/")
+movePodcasts(baseSource, baseSync, "Religion/One Peter Five")
+movePodcasts(baseSource, baseSync, "Fitness/Get up and Code", oldEpisodes=True)
 
 print("=== finished at " + str(datetime.datetime.now()) + " ===")
 
