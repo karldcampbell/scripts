@@ -7,8 +7,7 @@ import random
 from shutil import move
 from subprocess import call
 
-defaultFileNum = 3
-def movePodcasts(sourceBase, destBase, directory,  count=defaultFileNum):
+def movePodcasts(sourceBase, destBase, directory,  count=3):
 	destDir = os.listdir(destBase + directory)
 	filesShort = count - len(destDir)
 	#if filesShort > 0:
@@ -24,6 +23,13 @@ def movePodcasts(sourceBase, destBase, directory,  count=defaultFileNum):
 
 print("=== starting downloadPodcasts.py ===")
 print("=== started at " + str(datetime.datetime.now()) + " ===")
+
+skipDownload = False
+if(len(sys.argv) > 1):
+	if(sys.argv[1] == "--skipDownload"):
+		skipDownload = True
+
+defaultFileNum = 3
 
 baseSource = "/mnt/share/Podcasts/"
 baseSync = "/home/kdc/Public/sync/podcasts/"
@@ -59,7 +65,11 @@ sourceDirs = [	["Added/"],
 								["Fitness/Get up and Code/"]
 							]
 
-call("podget")
+if(not skipDownload):
+	call("podget")
+else:
+	print("Skiping download...")
+
 
 for tup in sourceDirs:
 	if len(tup) == 2:
