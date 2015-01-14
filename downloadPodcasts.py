@@ -35,48 +35,39 @@ baseSource = "/mnt/share/Podcasts/"
 baseSync = "/home/kdc/Public/sync/podcasts/"
 
 datePrefix = datetime.date.today();
-sourceDirs = [	["Added/"],
-								["News/Tech Talk Today/"],
-
-								["Tech/Omega Tau/"],
-								
-								["Linux/Linux Action Show/"],
-								["Linux/Linux Unplugged/"],
-								
-								["Programming/Coder Radio/"],
-								["Programming/HanselMinutes/"],
-								["Programming/Herding Code/"],
-								["Programming/Java Posse/"],
-								["Programming/Java Posse Old/"],
-								["Programming/Software Engineering Radio/"],
-
-								["Politics/AVFM Radio/"],
-								["Politics/JB Unfilter/"],
-								["Politics/Honey Badger Radio/"],
-								["Politics/Law Talk/"],
-								["Politics/The Libertarian - Richard Epstein/"],
-								["Politics/The Libertarian - Richard Epstein Old/"],
-								["Politics/The Ricochet Podcast/"],
-								["Politics/The Ricochet Podcast Old/"],
-								["Politics/Serial/"],
-
-								["Religion/One Peter Five/"],
-
-								["Fitness/Get up and Code/"]
-							]
 
 if(not skipDownload):
 	call("podget")
 else:
 	print("Skiping download...")
 
+movePodcasts(baseSource, baseSync, "Added/")
+movePodcasts(baseSource, baseSync, "News/Tech Talk Today/")
 
-for tup in sourceDirs:
-	if len(tup) == 2:
-		movePodcasts(baseSource, baseSync, tup[0], count=tup[1])
-	else:
-		movePodcasts(baseSource, baseSync, tup[0])
-		
+movePodcasts(baseSource, baseSync, "Tech/Omega Tau/")
+
+movePodcasts(baseSource, baseSync, "Linux/Linux Action Show/")
+movePodcasts(baseSource, baseSync, "Linux/Linux Unplugged/")
+
+movePodcasts(baseSource, baseSync, "Programming/Coder Radio/")
+movePodcasts(baseSource, baseSync, "Programming/HanselMinutes/")
+movePodcasts(baseSource, baseSync, "Programming/Herding Code/")
+movePodcasts(baseSource, baseSync, "Programming/Java Posse/")
+movePodcasts(baseSource, baseSync, "Programming/Java Posse Old/")
+movePodcasts(baseSource, baseSync, "Programming/Software Engineering Radio/")
+
+movePodcasts(baseSource, baseSync, "Politics/AVFM Radio/")
+movePodcasts(baseSource, baseSync, "Politics/JB Unfilter/")
+movePodcasts(baseSource, baseSync, "Politics/Honey Badger Radio/")
+movePodcasts(baseSource, baseSync, "Politics/Law Talk/")
+movePodcasts(baseSource, baseSync, "Politics/The Libertarian - Richard Epstein/")
+movePodcasts(baseSource, baseSync, "Politics/The Libertarian - Richard Epstein Old/")
+movePodcasts(baseSource, baseSync, "Politics/The Ricochet Podcast/")
+movePodcasts(baseSource, baseSync, "Politics/The Ricochet Podcast Old/")
+#movePodcasts(baseSource, baseSync, "Politics/Serial/")
+
+movePodcasts(baseSource, baseSync, "Religion/One Peter Five/")
+movePodcasts(baseSource, baseSync, "Fitness/Get up and Code/")
 
 print("=== finished at " + str(datetime.datetime.now()) + " ===")
 
