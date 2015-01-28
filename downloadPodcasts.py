@@ -80,7 +80,6 @@ movePodcasts(baseSource, baseSync, "Politics/The Ricochet Podcast", oldEpisodes=
 #movePodcasts(baseSource, baseSync, "Politics/JB Unfilter")
 #movePodcasts(baseSource, baseSync, "Politics/Serial/")
 
-movePodcasts(baseSource, baseSync, "Religion/One Peter Five")
 movePodcasts(baseSource, baseSync, "Fitness/Get up and Code", oldEpisodes=True)
 
 print("=== finished at " + str(datetime.datetime.now()) + " ===")
