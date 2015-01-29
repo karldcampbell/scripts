@@ -60,8 +60,11 @@ else:
 
 movePodcasts(baseSource, baseSync, "Added")
 movePodcasts(baseSource, baseSync, "News/Tech Talk Today")
+movePodcasts(baseSource, baseSync, "News/CBS_World_News_Roundup")
+movePodcasts(baseSource, baseSync, "News/CBS_Weekend_Roundup")
 
-movePodcasts(baseSource, baseSync, "Tech/Omega Tau")
+movePodcasts(baseSource, baseSync, "Sci_Tech/Omega Tau", oldEpisodes=True)
+movePodcasts(baseSource, baseSync, "Sci_Tech/Freakonomics_Radio", oldEpisodes=True)
 
 movePodcasts(baseSource, baseSync, "Linux/Linux Action Show")
 movePodcasts(baseSource, baseSync, "Linux/Linux Unplugged")
@@ -79,6 +82,9 @@ movePodcasts(baseSource, baseSync, "Politics/The Libertarian - Richard Epstein",
 movePodcasts(baseSource, baseSync, "Politics/The Ricochet Podcast", oldEpisodes=True)
 #movePodcasts(baseSource, baseSync, "Politics/JB Unfilter")
 #movePodcasts(baseSource, baseSync, "Politics/Serial/")
+
+movePodcasts(baseSource,baseSync, "Religion/Catholic_Underground")
+movePodcasts(baseSource,baseSync, "Religion/Word_On_Fire_Sermon", oldEpisodes=True)
 
 movePodcasts(baseSource, baseSync, "Fitness/Get up and Code", oldEpisodes=True)
 
