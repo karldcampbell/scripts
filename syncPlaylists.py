@@ -153,37 +153,40 @@ baseSync = "/home/kdc/Public/sync/podcasts/"
 
 commutePlaylistName = baseSync + "commute.m3u"
 workoutPlaylistName = baseSync + "workout.m3u"
+shortPlaylistName = baseSync + "short.m3u"
 
 oldCommuteList = getLinesFromFile(commutePlaylistName)
 oldWorkoutList = getLinesFromFile(workoutPlaylistName)
+oldShortList = getLinesFromFile(shortPlaylistName)
 
 #####
 
-header = getPodcastsFromDir(baseSync, "News/Tech Talk Today") + \
+header = mixPodcasts(baseSync, ["News/Tech Talk Today", "News/CBS_World_News_Roundup", "News/CBS_Weekend_Roundup"]) + \
 				 getPodcastsFromDir(baseSync, "Added", limit=1) + \
 				 getPodcastsFromDir(baseSync, "Politics/Serial")
 
-commuteLinux = mixPodcasts(baseSync, ["Linux/Linux Action Show", "Linux/Linux Unplugged"])
+commuteOther = mixPodcasts(baseSync, ["Linux/Linux Action Show", "Linux/Linux Unplugged", "Sci_Tech/Omega Tau", "Sci_Tech/Freakonomics_Radio"])
 commuteProgramming = mixPodcasts(baseSync, ["Programming/Java Posse", "Programming/Software Engineering Radio",
-			"Programming/HanselMinutes", "Programming/Coder Radio", "Programming/Herding Code"])
+			"Programming/HanselMinutes", "Programming/Coder Radio", "Programming/Herding Code",
+			"Sci_Tech/Omega Tau Old", "Sci_Tech/Freakonomics_Radio Old"])
 
 commuteOld = mixPodcasts(baseSync, ["Programming/Coder Radio Old", "Programming/HanselMinutes Old",
-					"Programming/Herding Code Old", "Programming/Java Posse Old", "Tech/Omega Tau"])
+					"Programming/Herding Code Old", "Programming/Java Posse Old", "Sci_Tech/Omega Tau"])
 
 workoutNew = mixPodcasts(baseSync, ["Politics/Honey Badger Radio", "Politics/The Ricochet Podcast", 
-				"Politics/The Libertarian - Richard Epstein",
-				"Politics/Law Talk", "Fitness/Get up and Code"])
+				"Politics/The Libertarian - Richard Epstein",# "Sci_Tech/Omega Tau", "Sci_Tech/Freakonomics_Radio",
+				"Politics/Law Talk", "Fitness/Get up and Code", "Religion/Catholic_Underground", "Religion/Word_On_Fire_Sermon"])
 
 workoutOld = mixPodcasts(baseSync, ["Politics/AVFM Radio", "Politics/Law Talk Old",
-					"Politics/The Ricochet Podcast Old", "Tech/Omega Tau", "Fitness/Get up and Code Old",
-					"Politics/Honey Badger Radio Old"])
+					"Politics/The Ricochet Podcast Old", "Sci_Tech/Omega Tau Old", "Sci_Tech/Freakonomics_Radio Old", 
+					"Fitness/Get up and Code Old", "Politics/Honey Badger Radio Old", "Religion/Word_On_Fire_Sermon Old"])
 
 newCommuteList = generatePlaylist(
 		[
 			header,
 			getPodcastsFromDir(baseSync, "Added",offset=1),
 			commuteProgramming,
-			commuteLinux,
+			commuteOther,
 			workoutNew[0:3],
 			commuteOld ], oldCommuteList, [])
 
@@ -192,7 +195,7 @@ newWorkoutList = generatePlaylist(
 			header,
 			getPodcastsFromDir(baseSync, "Added", offset=1),
 			workoutNew,
-			commuteLinux,
+			commuteOther,
 			workoutOld ], oldWorkoutList, [])
 
 currentlyPlaying = [newCommuteList[0], newWorkoutList[0]]
@@ -200,8 +203,16 @@ currentlyPlaying = [newCommuteList[0], newWorkoutList[0]]
 newCommuteList = removeCurrent(newCommuteList, currentlyPlaying)
 newWorkoutList = removeCurrent(newWorkoutList, currentlyPlaying)
 
+shortList = generatePlaylist([
+	mixPodcasts(baseSync, ["News/Tech Talk Today", "News/CBS_World_News_Roundup", "Politics/The Libertarian - Richard Epstein",
+			"Religion/Word_On_Fire_Sermon", "Sci_Tech/Freakonomics_Radio"]),
+	mixPodcasts(baseSync, ["Politics/The Libertarian - Richard Epstein Old", "Religion/Word_On_Fire_Sermon Old",
+			"Sci_Tech/Freakonomics_Radio Old"])
+	], oldShortList, currentlyPlaying)
+
 writePlaylistFile(baseSync, "commute.m3u", oldCommuteList, newCommuteList) 
 writePlaylistFile(baseSync, "workout.m3u", oldWorkoutList, newWorkoutList) 
+writePlaylistFile(baseSync, "short.m3u", oldShortList, shortList)
 
 writePlaylistFile(baseSync, "all.m3u", getLinesFromFile(baseSync + "all.m3u"),
 	removeCurrent(mixPodcasts(baseSync, [
@@ -214,6 +225,8 @@ writePlaylistFile(baseSync, "all.m3u", getLinesFromFile(baseSync + "all.m3u"),
 				"Linux/Linux Unplugged",
 				
 				"News/Tech Talk Today",
+				"News/CBS_Weekend_Roundup",
+				"News/CBS_World_News_Roundup",
 				
 				"Politics/AVFM Radio",
 				"Politics/Honey Badger Radio",
@@ -235,8 +248,15 @@ writePlaylistFile(baseSync, "all.m3u", getLinesFromFile(baseSync + "all.m3u"),
 				"Programming/Java Posse",
 				"Programming/Java Posse Old",
 				"Programming/Software Engineering Radio",
+
+				"Religion/Catholic_Underground",
+				"Religion/Word_On_Fire_Sermon",
+				"Religion/Word_On_Fire_Sermon Old",
 				
-				"Tech/Omega Tau",
+				"Sci_Tech/Omega Tau",
+				"Sci_Tech/Omega Tau Old",
+				"Sci_Tech/Freakonomics_Radio",
+				"Sci_Tech/Freakonomics_Radio Old"
 				
 			], maxSequence=0), currentlyPlaying)
 		)
@@ -245,8 +265,8 @@ writePlaylistFile(baseSync, "z0_header.m3u", getLinesFromFile(baseSync + "z0_hea
 
 writePlaylistFile(baseSync, "z_commute_programming.m3u", getLinesFromFile(baseSync + "z_commute_programming.m3u"),
 		removeCurrent(commuteProgramming, currentlyPlaying, keepFirstLine=False))
-writePlaylistFile(baseSync, "z_commute_linux.m3u", getLinesFromFile(baseSync + "z_commute_linux.m3u"),
-		removeCurrent(commuteLinux, currentlyPlaying,  keepFirstLine=False))
+writePlaylistFile(baseSync, "z_commute_other.m3u", getLinesFromFile(baseSync + "z_commute_other.m3u"),
+		removeCurrent(commuteOther, currentlyPlaying,  keepFirstLine=False))
 writePlaylistFile(baseSync, "z_commute_old.m3u", getLinesFromFile(baseSync + "z_commute_old.m3u"),
 		removeCurrent(commuteOld, currentlyPlaying,  keepFirstLine=False))
 
